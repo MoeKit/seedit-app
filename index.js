@@ -5,7 +5,9 @@ var appReg = /bz-(bbs|crazy)-(android|ios)/;
 var fkzrReg = /bz-crazy-(android|ios)/;
 var bbsReg = /bz-bbs-(android|ios)/;
 var wxReg = /micromessenger/i;
-var ua = window.__ua || navigator.userAgent;
+var ua = function() {
+	return window.__ua || navigator.userAgent;
+};
 var data = null;
 var readyCallback = [];
 var debug = false;
@@ -20,11 +22,11 @@ var tipTpl = require('./tip.tpl');
 var $tip = $(tipTpl).appendTo('body');
 // 获取版本
 exports.getAppVersion = function() {
-	if (!fkzrReg.test(ua)) {
+	if (!fkzrReg.test(ua())) {
 		return 0;
 	} else {
 		var r = new RegExp(/[0-9].[0-9].[0-9]+/);
-		return ua.match(r)[0].replace(/\./g, '');
+		return ua().match(r)[0].replace(/\./g, '');
 	}
 };
 
@@ -34,7 +36,7 @@ exports.getAppVersion = function() {
 var compareVersion = exports.compareVersion = function(version) {
 	var expectVersion = version.replace('.', '').replace('.', '') * 1;
 	var r = new RegExp(/[0-9].[0-9].[0-9]+/);
-	var v = ua.match(r)[0].replace(/\./g, '');
+	var v = ua().match(r)[0].replace(/\./g, '');
 	// 期望版本小于现在版本
 	if (expectVersion <= v) {
 		return true;
@@ -78,11 +80,11 @@ var openInFkzr = exports.openInFkzr = function() {
 exports.checkVersion = function(version, tip, force) {
 	var expectVersion = version.replace('.', '').replace('.', '') * 1;
 	var r = new RegExp(/[0-9].[0-9].[0-9]+/);
-	var v = ua.match(r)[0].replace(/\./g, '');
+	var v = ua().match(r)[0].replace(/\./g, '');
 
 	if (!force) {
 		// 不是疯狂造人，不管
-		if (!fkzrReg.test(ua)) {
+		if (!fkzrReg.test(ua())) {
 			return;
 		}
 
@@ -109,7 +111,7 @@ var buildRedirectUrl = function(url) {
 var _getJson = function(cb) {
 	var isReturn = false;
 	// 不是客户端滚开
-	if (!appReg.test(ua)) {
+	if (!appReg.test(ua())) {
 		log('非app，返回空token');
 		cb && cb({});
 		isReturn = true;
@@ -122,13 +124,13 @@ var _getJson = function(cb) {
 		window.crazy.token();
 	}
 
-	function wait() {
-		if (!window.__access_token || !window.crazyjson && !window.bzjson && !window.name) {
+	function wait() {alert(window.__access_token);
+		if (!window.__access_token && !window.crazyjson && !window.bzjson && !window.name) {
 			setTimeout(wait, 50);
 		} else {
 			var crazy = JSON.parse(window.__access_token || window.crazyjson || window.bzjson || window.name);
 			data = crazy;
-			window.name = window.crazyjson || window.bzjson || window.name;
+			window.name = window.__access_token || window.crazyjson || window.bzjson || window.name;
 			log('缓存json' + window.name);
 			if (!isReturn) {
 				log('app，得到token');
@@ -199,11 +201,11 @@ exports.afterAllLogin = function(cb, option) {
 
 
 	// 已经登录并且不是客户端就回调，否则重新登录，避免客户端切用户时webview的用户切换不了
-	if (hasLogin() && !appReg.test(ua)) {
+	if (hasLogin() && !appReg.test(ua())) {
 		cb();
 	} else {
 		// 非app
-		if (!appReg.test(ua)) {
+		if (!appReg.test(ua())) {
 			log('非app，跳转Account去登录');
 			document.location.href = buildRedirectUrl();
 		} else { // 是app
@@ -231,7 +233,7 @@ exports.afterAppLogin = function(cb) {
 		cb();
 	} else {
 		// 非app
-		if (!appReg.test(ua)) {
+		if (!appReg.test(ua())) {
 			cb();
 		} else { // 是app
 			_ready(function(err) {
@@ -256,7 +258,7 @@ exports.getData = function() {
 };
 
 function isApp() {
-	return appReg.test(ua);
+	return appReg.test(ua());
 }
 
 // 是否是客户端
@@ -264,17 +266,17 @@ exports.isApp = isApp;
 
 // 是否是疯狂造人
 exports.isFkzr = function() {
-	return fkzrReg.test(ua);
+	return fkzrReg.test(ua());
 };
 
 // 是否是怀孕社区
 exports.isBbs = function() {
-	return bbsReg.test(ua);
+	return bbsReg.test(ua());
 };
 
 // 是否是微信
 exports.isWx = function() {
-	return wxReg.test(ua);
+	return wxReg.test(ua());
 };
 
 exports.shop = {};
