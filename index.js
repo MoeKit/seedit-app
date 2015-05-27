@@ -5,7 +5,7 @@ var appReg = /bz-(bbs|crazy)-(android|ios)/;
 var fkzrReg = /bz-crazy-(android|ios)/;
 var bbsReg = /bz-bbs-(android|ios)/;
 var wxReg = /micromessenger/i;
-var ua = navigator.userAgent;
+var ua = window.__ua || navigator.userAgent;
 var data = null;
 var readyCallback = [];
 var debug = false;
@@ -109,7 +109,7 @@ var buildRedirectUrl = function(url) {
 var _getJson = function(cb) {
 	var isReturn = false;
 	// 不是客户端滚开
-	if (!appReg.test(navigator.userAgent)) {
+	if (!appReg.test(ua)) {
 		log('非app，返回空token');
 		cb && cb({});
 		isReturn = true;
@@ -123,10 +123,10 @@ var _getJson = function(cb) {
 	}
 
 	function wait() {
-		if (!window.crazyjson && !window.bzjson && !window.name) {
+		if (!window.__access_token || !window.crazyjson && !window.bzjson && !window.name) {
 			setTimeout(wait, 50);
 		} else {
-			var crazy = JSON.parse(window.crazyjson || window.bzjson || window.name);
+			var crazy = JSON.parse(window.__access_token || window.crazyjson || window.bzjson || window.name);
 			data = crazy;
 			window.name = window.crazyjson || window.bzjson || window.name;
 			log('缓存json' + window.name);
@@ -224,7 +224,7 @@ exports.afterAllLogin = function(cb, option) {
 exports.afterAppLogin = function(cb) {
 	// 先处理客户端登录
 	if (isApp()) {
-		
+
 	}
 
 	if (hasLogin()) {
@@ -295,4 +295,6 @@ function buildFkzrUrl(json) {
 	return 'fkzr://' + encodeURIComponent(JSON.stringify(json));
 };
 
+var Version = require('./lib/version');
+exports.getVersion = Version.getVersion;
 exports.share = require('./lib/share');
