@@ -1,0 +1,48 @@
+/* 弹入-从上 */
+.bounceinT,.bounceoutB{-webkit-animation:0.5s ease-out backwards;-moz-animation:0.5s ease-out backwards;-ms-animation:0.5s ease-out backwards;animation:0.5s ease-out backwards;-webkit-animation-name:bounceinT;-moz-animation-name:bounceinT;-ms-animation-name:bounceinT;animation-name:bounceinT;}
+/* 弹入-从上 */
+@-webkit-keyframes bounceinT{
+    0%{opacity:0;-webkit-transform:translateY(-300px);}
+    60%{opacity:1;-webkit-transform:translateY(30px);}
+    80%{-webkit-transform:translateY(-10px);}
+    100%{-webkit-transform:translateY(0);}
+}
+
+@keyframes bounceinT{
+    0%{opacity:0;transform:translateY(-300px);}
+    60%{opacity:1;transform:translateY(30px);}
+    80%{transform:translateY(-10px);}
+    100%{transform:translateY(0);}
+}
+
+/* 弹出-向下 */
+.bounceoutB{-webkit-animation-name:bounceoutB;-moz-animation-name:bounceoutB;-ms-animation-name:bounceoutB;animation-name:bounceoutB;}
+
+/* 弹出-向下 */
+@-webkit-keyframes bounceoutB{
+    0%{-webkit-transform:translateY(0);}
+    20%{opacity:1;-webkit-transform:translateY(-20px);}
+    100%{opacity:0;-webkit-transform:translateY(300px);}
+}
+@keyframes bounceoutB{
+    0%{transform:translateY(0);}
+    20%{opacity:1;transform:translateY(-20px);}
+    100%{opacity:0;transform:translateY(300px);}
+}
+
+
+.normal-translate {
+	transform: translateY(0);
+	-webkit-transform:translateY(0);
+}
+
+#seedit-app-content {
+	display:none;width:280px;text-align:center;background-color:#fff;position:absolute;left:50%;top:50%;margin-left:-160px;margin-top:-102px;padding:18px 20px 12px 20px;border-radius:8px;
+}
+
+@media screen and (max-width:320px){
+     #seedit-app-content {
+      	width:256px;
+      	margin-left:-148px;
+     }
+}
