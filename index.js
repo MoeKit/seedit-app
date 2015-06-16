@@ -20,9 +20,10 @@ var $ = require('zepto');
 require('./style.css');
 var tipTpl = require('./tip.tpl');
 var $tip = $(tipTpl).appendTo('body');
+
 // 获取版本
-exports.getAppVersion = function() {
-	if (!fkzrReg.test(ua())) {
+var getAppVersion = function() {
+	if (!appReg.test(ua())) {
 		return 0;
 	} else {
 		var r = new RegExp(/[0-9].[0-9].[0-9]+/);
@@ -30,10 +31,28 @@ exports.getAppVersion = function() {
 	}
 };
 
+exports.getAppVersion = getAppVersion;
+
+// 获取当前客户端的版本号
+var getCompareVersion = function(fkzrVersion, bbsVersion) {
+	var version = '0';
+	if (fkzrReg.test(ua())) {
+		version = fkzrVersion;
+	}
+	if (bbsReg.test(ua())) {
+		version = bbsVersion;
+	}
+	return version;
+};
+
+exports.getCompareVersion = getCompareVersion;
 
 // 对比版本号
 // 返回true表示正确版本号，false表示低于版本
-var compareVersion = exports.compareVersion = function(version) {
+// 第一个参数为疯狂造人版本号，第二个参数为播种网版本号,当满足任一版本要求时返回true
+
+var compareVersion = exports.compareVersion = function(fkzrVersion, bbsVersion) {
+	var version = getCompareVersion(fkzrVersion, bbsVersion);
 	var expectVersion = version.replace('.', '').replace('.', '') * 1;
 	var r = new RegExp(/[0-9].[0-9].[0-9]+/);
 	var v = ua().match(r)[0].replace(/\./g, '');
@@ -47,7 +66,8 @@ var compareVersion = exports.compareVersion = function(version) {
 
 var showVersionDialog = exports.showVersionDialog = function(tip) {
 	$tip.find('.seedit-app-subtitle').text(tip ? tip : '需要升级到最新版本才能购买商品');
-
+	var url = isFkzr() ? 'http://crazy.bozhong.com/#x-block=version_update' : 'http://m.bozhong.com/download.html';
+	$tip.find('seedit-app-btn').attr('href', url);
 	$tip.show();
 	$('#seedit-app-content').show().addClass('bounceinT');
 	$tip.find('.seedit-app-close').on('click', function(e) {
@@ -77,7 +97,12 @@ var openInFkzr = exports.openInFkzr = function() {
 };
 
 // 检测低于某个版本的客户端，并提示更新
-exports.checkVersion = function(version, tip, force) {
+exports.checkVersion = function(fkzrVersion, bbsVersion, tip, force) {
+	var compare = compareVersion(fkzrVersion, bbsVersion);
+	if (compare && !force) {
+		return;
+	}
+	var version = getCompareVersion(fkzrVersion,bbsVersion);
 	var expectVersion = version.replace('.', '').replace('.', '') * 1;
 	var r = new RegExp(/[0-9].[0-9].[0-9]+/);
 	var v = ua().match(r)[0].replace(/\./g, '');
@@ -124,7 +149,7 @@ var _getJson = function(cb) {
 		window.crazy.token();
 	}
 
-	function wait() {alert(window.__access_token);
+	function wait() {
 		if (!window.__access_token && !window.crazyjson && !window.bzjson && !window.name) {
 			setTimeout(wait, 50);
 		} else {
@@ -221,6 +246,42 @@ exports.afterAllLogin = function(cb, option) {
 	}
 };
 
+// 疯狂造人中转页面
+exports.afterFkzrLogin = function(cb, option) {
+	if (option && option.debug) {
+		debug = true;
+	}
+
+	var compare = compareVersion('4.1.0');
+	if (!compare) {
+		// 小于4.1.0时，有cookie就算登录
+		if (hasLogin()) {
+			return cb('success');
+		} else {
+			return cb('fail');
+		}
+	}
+	// 已经登录并且不是客户端就回调，否则重新登录，避免客户端切用户时webview的用户切换不了
+	if (hasLogin() && !appReg.test(ua())) {
+		cb('success');
+	} else {
+		// 非app
+		if (!appReg.test(ua())) {
+			log('非app，直接pass');
+			cb('fail');
+		} else { // 是app
+			_ready(function(err) {
+				if (err === 'fail') {
+					log('得不到token')
+					cb('fail');
+				} else if (err === 'success') {
+					cb('success');
+				}
+			});
+		}
+	}
+};
+
 // 保证客户端登录，非客户端不强制登录
 // 当为非客户端时，直接执行回调
 exports.afterAppLogin = function(cb) {
@@ -265,9 +326,11 @@ function isApp() {
 exports.isApp = isApp;
 
 // 是否是疯狂造人
-exports.isFkzr = function() {
+function isFkzr() {
 	return fkzrReg.test(ua());
-};
+}
+
+exports.isFkzr = isFkzr;
 
 // 是否是怀孕社区
 exports.isBbs = function() {

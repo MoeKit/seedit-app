@@ -13,4 +13,20 @@ describe('seedit-app', function() {
 		expect(getVersion()).to.be(410);
 	});
 
+	it('get compare version', function() {
+		window.__ua = "bz-crazy-ios-4.1.0 Mozilla/5.0 (iPhone; CPU iPhone OS 8_1_2 like Mac OS X) AppleWebKit/600.1.4 (KHTML, like Gecko) Mobile/12B440";
+		expect(seeditApp.getCompareVersion('4.3.0', '2.6.0')).to.be('4.3.0');
+		window.__ua = "bz-bbs-ios-4.1.0 Mozilla/5.0 (iPhone; CPU iPhone OS 8_1_2 like Mac OS X) AppleWebKit/600.1.4 (KHTML, like Gecko) Mobile/12B440";
+		expect(seeditApp.getCompareVersion('4.3.0', '2.6.0')).to.be('2.6.0');
+	});
+
+	it('compareVersion', function() {
+		window.__ua = "bz-crazy-ios-4.1.0 Mozilla/5.0 (iPhone; CPU iPhone OS 8_1_2 like Mac OS X) AppleWebKit/600.1.4 (KHTML, like Gecko) Mobile/12B440";
+		expect(seeditApp.compareVersion('4.3.0', '2.6.0')).to.be(false);
+		expect(seeditApp.compareVersion('4.0.0', '2.6.0')).to.be(true);
+		window.__ua = "bz-bbs-ios-2.5.0 Mozilla/5.0 (iPhone; CPU iPhone OS 8_1_2 like Mac OS X) AppleWebKit/600.1.4 (KHTML, like Gecko) Mobile/12B440";
+		expect(seeditApp.compareVersion('4.0.0', '2.6.0')).to.be(false);
+		expect(seeditApp.compareVersion('4.0.0', '2.4.0')).to.be(true);
+	});
+
 });

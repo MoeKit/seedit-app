@@ -2,24 +2,15 @@
 
 ---
 
-## 版本wiki
-
-> `4.0.0` 可以获取到access_token，实现自动登录
-
-> `4.1.0` 商城可用
-
-> `4.1.0` 分享可自定义链接
-
-
 ## 检查版本
 
 > 当`大于等于`期望版本时，返回`true`，否则返回`false`。
 
-> 版本号必须为3位版本号
+> 因一个页面可能同时用于怀孕社区App和疯狂造人，第一个参数为疯狂造人版本号，第二个参数为怀孕社区版本号，必须为3位版本号。
 
 ````javascript
 var seeditApp = require('seedit-app');
-var compare = seeditApp.compareVersion('4.3.0');
+var compare = seeditApp.compareVersion('4.3.0','2.5.0');
 ````
 
 ## 版本过低弹窗
@@ -43,15 +34,15 @@ var compare = seeditApp.compareVersion('4.3.0');
 var seeditApp = require('seedit-app');
 
 document.getElementById('clickme0').onclick= function(){
-	seeditApp.checkVersion('4.3.0');
+	seeditApp.checkVersion('4.3.0','2.5.0');
 };
 
 document.getElementById('clickme1').onclick= function(){
-	seeditApp.checkVersion('4.3.0',null,true);
+	seeditApp.checkVersion('4.3.0','2.5.0',null,true);
 };
 
 document.getElementById('clickme2').onclick= function(){
-	seeditApp.checkVersion('4.3.0','你是逗逼吗',true);
+	seeditApp.checkVersion('4.3.0','2.5.0','你是逗逼吗',true);
 };
 
 document.getElementById('clickme3').onclick= function(){
