@@ -67,7 +67,7 @@ var compareVersion = exports.compareVersion = function(fkzrVersion, bbsVersion) 
 var showVersionDialog = exports.showVersionDialog = function(tip) {
 	$tip.find('.seedit-app-subtitle').text(tip ? tip : '需要升级到最新版本才能购买商品');
 	var url = isFkzr() ? 'http://crazy.bozhong.com/#x-block=version_update' : 'http://m.bozhong.com/download.html';
-	$tip.find('seedit-app-btn').attr('href', url);
+	$tip.find('.seedit-app-btn').attr('href', url);
 	$tip.show();
 	$('#seedit-app-content').show().addClass('bounceinT');
 	$tip.find('.seedit-app-close').on('click', function(e) {
