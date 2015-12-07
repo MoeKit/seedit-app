@@ -33,9 +33,14 @@
 
 + `bug` Android webview左上角的返回键不是退出，而是后退，影响到所有webview页面
 
-`4.2.1`(未发布)
+`4.2.1`
 
 + 修复上面问题百分号问题和webview后退问题
+
+`<4.3`
+
++ 所有`Android`版本实际上没法单独配置某个平台的分享！！
++ `Android`和`iOS`在webview再进入第二个webview时token没法获取
 
 ## 播种网版本wiki
 

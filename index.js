@@ -102,14 +102,14 @@ exports.checkVersion = function(fkzrVersion, bbsVersion, tip, force) {
 	if (compare && !force) {
 		return;
 	}
-	var version = getCompareVersion(fkzrVersion,bbsVersion);
+	var version = getCompareVersion(fkzrVersion, bbsVersion);
 	var expectVersion = version.replace('.', '').replace('.', '') * 1;
 	var r = new RegExp(/[0-9].[0-9].[0-9]+/);
 	var v = ua().match(r)[0].replace(/\./g, '');
 
 	if (!force) {
-		// 不是疯狂造人，不管
-		if (!fkzrReg.test(ua())) {
+		// 不是疯狂造人或者播种网，不管
+		if (!isApp()) {
 			return;
 		}
 
@@ -142,7 +142,7 @@ var _getJson = function(cb) {
 		isReturn = true;
 		return;
 	}
-
+	log('客户端');
 	// 是客户端
 	// android 手动执行token注入，因为会有延时(不知道为什么)
 	if (window.crazy && window.crazy.token) {
@@ -150,13 +150,14 @@ var _getJson = function(cb) {
 	}
 
 	function wait() {
+		//alert('bzjson'+window.bzjson);
 		if (!window.__access_token && !window.crazyjson && !window.bzjson && !window.name) {
-			setTimeout(wait, 50);
+			setTimeout(wait, 100);
 		} else {
 			var crazy = JSON.parse(window.__access_token || window.crazyjson || window.bzjson || window.name);
 			data = crazy;
 			window.name = window.__access_token || window.crazyjson || window.bzjson || window.name;
-			log('缓存json' + window.name);
+			log('缓存下json' + window.name);
 			if (!isReturn) {
 				log('app，得到token');
 				cb && cb(crazy);
@@ -183,6 +184,8 @@ var _ready = function(cb) {
 			log('得不到token');
 			cb && cb('fail');
 		} else {
+			log('开始换cookie');
+			log('http://account.' + domain + '/restful/bozhong/tokentocookie.jsonp');
 			//if (!/_auth/.test(document.cookie)) {
 			jsonp('http://account.' + domain + '/restful/bozhong/tokentocookie.jsonp', {
 				access_token: json.access_token
@@ -249,12 +252,13 @@ exports.afterAllLogin = function(cb, option) {
 // 疯狂造人中转页面
 exports.afterFkzrLogin = function(cb, option) {
 	if (option && option.debug) {
+		alert('debug true');
 		debug = true;
 	}
 
-	var compare = compareVersion('4.1.0');
+	var compare = compareVersion('4.1.0','2.5.0');
 	if (!compare) {
-		// 小于4.1.0时，有cookie就算登录
+		// 小于特定版本时，有cookie就算登录
 		if (hasLogin()) {
 			return cb('success');
 		} else {
@@ -281,6 +285,7 @@ exports.afterFkzrLogin = function(cb, option) {
 		}
 	}
 };
+
 
 // 保证客户端登录，非客户端不强制登录
 // 当为非客户端时，直接执行回调
@@ -333,9 +338,11 @@ function isFkzr() {
 exports.isFkzr = isFkzr;
 
 // 是否是怀孕社区
-exports.isBbs = function() {
+exports.isBbs = isBbs;
+
+function isBbs() {
 	return bbsReg.test(ua());
-};
+}
 
 // 是否是微信
 exports.isWx = function() {
@@ -363,3 +370,4 @@ function buildFkzrUrl(json) {
 var Version = require('./lib/version');
 exports.getVersion = Version.getVersion;
 exports.share = require('./lib/share');
+exports._getJson = _getJson;
