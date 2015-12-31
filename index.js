@@ -370,4 +370,5 @@ function buildFkzrUrl(json) {
 var Version = require('./lib/version');
 exports.getVersion = Version.getVersion;
 exports.share = require('./lib/share');
+exports.allShare = require('./lib/allShare');
 exports._getJson = _getJson;
