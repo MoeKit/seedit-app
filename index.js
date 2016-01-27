@@ -219,7 +219,7 @@ exports.afterAllLogin = function(cb, option) {
 		debug = true;
 	}
 
-	var compare = compareVersion('4.1.0');
+	var compare = compareVersion('4.1.0', '2.5.0');
 	if (!compare) {
 		// 小于4.1.0时，有cookie就算登录
 		if (hasLogin()) {
