@@ -24,14 +24,30 @@ seajs.use('https://res.wx.qq.com/open/js/jweixin-1.0.0.js', function(wx) {
         title:'分享标题',  //标题
         url:'http://bozhong.com',  //分享的网址
         description:'分享主体', //主体内容，可选
-        weixinSessionContent: '微信好友内容', //可选
-        weixinSessionTitle: '微信好友标题', //可选
-        weixinTimelineContent: '朋友圈内容',
+        weixinSessionContent: '微信好友内容', 
+        weixinSessionTitle: '微信好友标题', 
+        weixinTimelineContent: '朋友圈内容', 
         weixinTimelineTitle: '朋友圈标题',
         bzWebviewBtn:'1100', // 显示分享和刷新按钮
         wxSet: {
             wx: wx,
-            debug: true
+            debug: true,
+            wxMessageShare: { // 分享给好友 可选
+                success: function() { // 分享成功回调
+                    // do something...
+                },
+                error: function() { // 分享失败回调
+                    // do something...
+                }
+            },
+            wxTimelineShare: { // 分享到朋友圈 可选
+                success: function() { // 分享成功回调
+                    // do something...
+                },
+                error: function() { // 分享失败回调
+                    // do something...
+                }
+            }
         }
     }, '#btn');
 })
@@ -61,7 +77,7 @@ https://mp.weixin.qq.com/wiki/7/aaa137b55fb2e0456bf8dd9148dd613f.html
 
 - hideMenuItems `object` 隐藏右上角菜单 wx.hideMenuItems(**hideMenuItems**)
 
-- wxMessageShare `object` 分享给好友的数据，默认会获取 web 协议属性的内容
+- wxMessageShare `object` 分享给好友的数据，默认会获取 web 协议属性的内容，可单独修改某个属性。
 
 - wxTimelineShare `object` 分享到朋友圈的数据，同上
 
