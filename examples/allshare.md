@@ -36,7 +36,7 @@ seajs.use('https://res.wx.qq.com/open/js/jweixin-1.0.0.js', function(wx) {
                 success: function() { // 分享成功回调
                     // do something...
                 },
-                error: function() { // 分享失败回调
+                cancel: function() { // 分享失败回调
                     // do something...
                 }
             },
@@ -44,7 +44,7 @@ seajs.use('https://res.wx.qq.com/open/js/jweixin-1.0.0.js', function(wx) {
                 success: function() { // 分享成功回调
                     // do something...
                 },
-                error: function() { // 分享失败回调
+                cancel: function() { // 分享失败回调
                     // do something...
                 }
             }
