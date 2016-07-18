@@ -9,6 +9,7 @@
 ````html
 <a id="btn" class="demo-btn">点击分享</a>
 <div id="share" style="display:none;"></div>
+
 ````
 
 ````javascript
@@ -49,7 +50,7 @@ seajs.use('https://res.wx.qq.com/open/js/jweixin-1.0.0.js', function(wx) {
                 }
             }
         }
-    }, '#btn');
+    }, '#btn','wxbdabbca71a87b6c2');
 })
 
 ````
@@ -61,6 +62,8 @@ seajs.use('https://res.wx.qq.com/open/js/jweixin-1.0.0.js', function(wx) {
 除 `wxSet` 外，其余都是 web 协议的属性，具体请参考：http://wiki.bozhong.com/ios/webshare#typewebshare
 
 *element* `string`
+
+*service appid* `string` 不传为空时，默认会以‘想要宝宝’进行授权
 
 DOM 元素，可绑定分享按钮（APP 端可用）
 
