@@ -9,3 +9,8 @@
 ## 0.0.1
 
 `new` It is the first version of seedit-app.
+
+
+## 0.0.7
+
+`new` 兼容hppts

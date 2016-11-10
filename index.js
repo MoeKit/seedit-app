@@ -66,7 +66,7 @@ var compareVersion = exports.compareVersion = function(fkzrVersion, bbsVersion) 
 
 var showVersionDialog = exports.showVersionDialog = function(tip) {
 	$tip.find('.seedit-app-subtitle').text(tip ? tip : '需要升级到最新版本才能购买商品');
-	var url = isFkzr() ? 'http://crazy.bozhong.com/#x-block=version_update' : 'http://m.bozhong.com/download.html';
+	var url = isFkzr() ? '//crazy.bozhong.com/#x-block=version_update' : '//m.bozhong.com/download.html';
 	$tip.find('.seedit-app-btn').attr('href', url);
 	$tip.show();
 	$('#seedit-app-content').show().addClass('bounceinT');
@@ -129,7 +129,7 @@ var hasLogin = function() {
 // 生成跳转链接
 var buildRedirectUrl = function(url) {
 	url = url || 　document.location.href;
-	return 'http://account.' + Config.getMainDomain() + '/?redirect_uri=' + encodeURIComponent(url);
+	return '//account.' + Config.getMainDomain() + '/?redirect_uri=' + encodeURIComponent(url);
 };
 
 // 获取数据
@@ -185,9 +185,9 @@ var _ready = function(cb) {
 			cb && cb('fail');
 		} else {
 			log('开始换cookie');
-			log('http://account.' + domain + '/restful/bozhong/tokentocookie.jsonp');
+			log('//account.' + domain + '/restful/bozhong/tokentocookie.jsonp');
 			//if (!/_auth/.test(document.cookie)) {
-			jsonp('http://account.' + domain + '/restful/bozhong/tokentocookie.jsonp', {
+			jsonp('//account.' + domain + '/restful/bozhong/tokentocookie.jsonp', {
 				access_token: json.access_token
 			}, '__c', function(data) {
 				log('换cookie' + JSON.stringify(data));
@@ -315,7 +315,7 @@ exports.afterAppLogin = function(cb) {
 
 // 获取用户信息，请注意在用户已经登录后使用
 exports.getUserData = function(cb) {
-	jsonp('http://common.' + domain + '/bbs/common_member.jsonp', {}, '__c', cb);
+	jsonp('//common.' + domain + '/bbs/common_member.jsonp', {}, '__c', cb);
 };
 
 // 获取客户端数据

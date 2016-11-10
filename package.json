@@ -1,6 +1,6 @@
 {
   "name": "seedit-app",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "",
   "keywords": [],
   "homepage": "",
@@ -16,7 +16,7 @@
   "spm": {
     "main": "index.js",
     "dependencies": {
-      "seedit-config": "~0.1.1",
+      "seedit-config": "~0.1.3",
       "jsonp": "~0.0.1",
       "zepto": "~1.1.3",
       "import-style": "~1.0.0"
