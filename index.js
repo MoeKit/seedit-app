@@ -123,7 +123,7 @@ exports.checkVersion = function(fkzrVersion, bbsVersion, tip, force) {
 
 // 根据cookie检查是否登录
 var hasLogin = function() {
-	return /_auth/.test(document.cookie);
+	return /seedit_auth/.test(document.cookie);
 };
 
 // 生成跳转链接
