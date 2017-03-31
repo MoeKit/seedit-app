@@ -133,7 +133,7 @@ var buildRedirectUrl = function(url) {
 };
 
 // 获取数据
-var _getJson = function(cb) {
+var _getJson = function(cb, options) {
 	var isReturn = false;
 	// 不是客户端滚开
 	if (!appReg.test(ua())) {
@@ -173,11 +173,11 @@ var _getJson = function(cb) {
 			cb && cb({});
 			isReturn = true;
 		}
-	}, 2000);
+	}, options.times || 2000);
 };
 
 // 登录设置cookie
-var _ready = function(cb) {
+var _ready = function(cb, options) {
 	_getJson(function(json) {
 		log('_getJson结果' + JSON.stringify(json));
 		if (!json.access_token) {
@@ -202,7 +202,7 @@ var _ready = function(cb) {
 			});
 			//}
 		}
-	});
+	}, options);
 };
 
 
@@ -244,7 +244,7 @@ exports.afterAllLogin = function(cb, option) {
 				} else if (err === 'success') {
 					cb();
 				}
-			});
+			}, option);
 		}
 	}
 };
