@@ -1,7 +1,7 @@
 var Config = require('seedit-config'),
 	jsonp = require('jsonp'),
 	domain = Config.getMainDomain();
-var appReg = /bz-(bbs|crazy)-(android|ios)/;
+var appReg = /bz-([A-Za-z]{1,50})-(android|ios)/;
 var fkzrReg = /bz-crazy-(android|ios)/;
 var bbsReg = /bz-bbs-(android|ios)/;
 var wxReg = /micromessenger/i;
