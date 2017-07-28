@@ -5,6 +5,8 @@ var appReg = /bz-([A-Za-z]{1,50})-(android|ios)/;
 var fkzrReg = /bz-crazy-(android|ios)/;
 var bbsReg = /bz-bbs-(android|ios)/;
 var wxReg = /micromessenger/i;
+// 第二套帐号体系识别，与播种相关不通
+var appToken2Reg = /bz-pray-(android|ios)/;
 var ua = function() {
 	return window.__ua || navigator.userAgent;
 };
@@ -123,12 +125,13 @@ exports.checkVersion = function(fkzrVersion, bbsVersion, tip, force) {
 
 // 根据cookie检查是否登录
 var hasLogin = function() {
+	if(appToken2Reg.test(ua())) return /seedit_app_auth/.test(document.cookie);
 	return /seedit_auth/.test(document.cookie);
 };
 
 // 生成跳转链接
 var buildRedirectUrl = function(url) {
-	url = url || 　document.location.href;
+	url = url || document.location.href;
 	return '//account.' + Config.getMainDomain() + '/?redirect_uri=' + encodeURIComponent(url);
 };
 
@@ -166,14 +169,14 @@ var _getJson = function(cb, options) {
 		}
 	}
 	wait();
-	// 2s获取不到token就算失败
+	// 8s获取不到token就算失败
 	setTimeout(function() {
 		if (!isReturn) {
-			log('App 2s内获取不到token,返回空token');
+			log('App 8s内获取不到token,返回空token');
 			cb && cb({});
 			isReturn = true;
 		}
-	}, options.times || 2000);
+	}, options? options.times : 8000);
 };
 
 // 登录设置cookie
@@ -184,12 +187,20 @@ var _ready = function(cb, options) {
 			log('得不到token');
 			cb && cb('fail');
 		} else {
-			log('开始换cookie');
-			log('//account.' + domain + '/restful/bozhong/tokentocookie.jsonp');
-			//if (!/_auth/.test(document.cookie)) {
-			jsonp('//account.' + domain + '/restful/bozhong/tokentocookie.jsonp', {
+			var _url;
+			var _json = {
 				access_token: json.access_token
-			}, '__c', function(data) {
+			};
+			if(appToken2Reg.test(ua())){
+				_url = '//account.' + domain + '/restful/app/tokentocookie.jsonp'; 
+				_json.__p = ua().match(appReg)[1];
+			} else {
+				_url = '//account.' + domain + '/restful/bozhong/tokentocookie.jsonp';
+			}
+			log('开始换cookie');
+			log(_url);
+			//if (!/_auth/.test(document.cookie)) {
+			jsonp(_url, _json, '__c', function(data) {
 				log('换cookie' + JSON.stringify(data));
 				// 处理token失效的情况
 				// 登录成功
@@ -211,7 +222,7 @@ exports.ready = _ready;
 
 // 确定在客户端和浏览器已经登录后才执行回调, 用于一定要用户登录的需求
 // 1.是客户端，且能得到token, 自动登录
-// 2.是客户端，2s内得不到token,跳网页登录
+// 2.是客户端，8s内得不到token,跳网页登录
 // 3.不是客户端，跳网页登录
 exports.afterAllLogin = function(cb, option) {
 	if (option && option.debug) {
