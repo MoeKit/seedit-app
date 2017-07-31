@@ -5,12 +5,14 @@ var appReg = /bz-([A-Za-z]{1,50})-(android|ios)/;
 var fkzrReg = /bz-crazy-(android|ios)/;
 var bbsReg = /bz-bbs-(android|ios)/;
 var wxReg = /micromessenger/i;
+var iosReg = /bz-([A-Za-z]{1,50})-ios/;
+var androidReg = /bz-([A-Za-z]{1,50})-android/;
 // 第二套帐号体系识别，与播种相关不通
 var appToken2Reg = /bz-pray-(android|ios)/;
 var ua = function() {
 	return window.__ua || navigator.userAgent;
 };
-var data = null;
+// var data = null;
 var readyCallback = [];
 var debug = false;
 var log = function(msg) {
@@ -154,19 +156,47 @@ var _getJson = function(cb, options) {
 
 	function wait() {
 		//alert('bzjson'+window.bzjson);
-		if (!window.__access_token && !window.crazyjson && !window.bzjson && !window.name) {
-			setTimeout(wait, 100);
-		} else {
-			var crazy = JSON.parse(window.__access_token || window.crazyjson || window.bzjson || window.name);
-			data = crazy;
-			window.name = window.__access_token || window.crazyjson || window.bzjson || window.name;
-			log('缓存下json' + window.name);
-			if (!isReturn) {
-				log('app，得到token');
-				cb && cb(crazy);
-				isReturn = true;
+			var crazy = null;
+			// fkzr6.5.0开始用js方式获取token，因不同app版本不一，直接判断方法是否存在
+			if (androidReg.test(ua()) && window.Crazy && window.Crazy.getBZToken) {
+				crazy = {
+					access_token: window.Crazy.getBZToken()
+				};
+				// crazy = JSON.parse(crazy);
+				log('js方式获得token' + JSON.stringify(crazy));
+				if (!isReturn) {
+					log('app，得到token');
+					cb && cb(crazy);
+					isReturn = true;
+				}
+			} else if (iosReg.test(ua()) && !!window.webkit && !!window.webkit.messageHandlers && !!window.webkit.messageHandlers.getBZToken) {
+				window.webkit.messageHandlers.getBZToken.postMessage(null);
+				window.getBZTokenResult = function(access_token) {
+					crazy = {
+						access_token: access_token
+					};
+					log('js方式获得token' + crazy);
+					if (!isReturn) {
+						log('app，得到token');
+						cb && cb(crazy);
+						isReturn = true;
+					}
+				};
+			} else {
+				if (!window.__access_token && !window.crazyjson && !window.bzjson && !window.name) {
+					setTimeout(wait, 100);
+				} else {
+					crazy = JSON.parse(window.__access_token || window.crazyjson || window.bzjson || window.name);
+						// data = crazy;
+					window.name = window.__access_token || window.crazyjson || window.bzjson || window.name;
+					log('缓存下json' + window.name);
+					if (!isReturn) {
+						log('app，得到token');
+						cb && cb(crazy);
+						isReturn = true;
+					}
+				}
 			}
-		}
 	}
 	wait();
 	// 8s获取不到token就算失败
@@ -176,7 +206,7 @@ var _getJson = function(cb, options) {
 			cb && cb({});
 			isReturn = true;
 		}
-	}, options? options.times : 8000);
+	}, !!options && !!options.times ? options.times : 8000);
 };
 
 // 登录设置cookie
