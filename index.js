@@ -157,10 +157,10 @@ var _getJson = function(cb, options) {
 	function wait() {
 		//alert('bzjson'+window.bzjson);
 			var crazy = null;
-			// fkzr6.5.0开始用js方式获取token，因不同app版本不一，直接判断方法是否存在
-			if (androidReg.test(ua()) && window.Crazy && window.Crazy.getBZToken) {
+			// fkzr6.5.0开始用js方式获取token，因不同app版本不一，直接判断方法是否存在 孕迹只有bzinner 没有Crazy
+			if (androidReg.test(ua()) && (Boolean(window.Crazy && window.Crazy.getBZToken) || Boolean(window.bzinner && window.bzinner.getBZToken))) {
 				crazy = {
-					access_token: window.Crazy.getBZToken()
+					access_token: window.Crazy ? window.Crazy.getBZToken() : window.bzinner.getBZToken(),
 				};
 				// crazy = JSON.parse(crazy);
 				log('js方式获得token' + JSON.stringify(crazy));
@@ -222,7 +222,7 @@ var _ready = function(cb, options) {
 				access_token: json.access_token
 			};
 			if(appToken2Reg.test(ua())){
-				_url = '//account.' + domain + '/restful/app/tokentocookie.jsonp'; 
+				_url = '//account.' + domain + '/restful/app/tokentocookie.jsonp';
 				_json.__p = ua().match(appReg)[1];
 			} else {
 				_url = '//account.' + domain + '/restful/bozhong/tokentocookie.jsonp';
