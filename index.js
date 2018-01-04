@@ -238,7 +238,7 @@ var _ready = function(cb, options) {
 					cb && cb('fail');
 					document.location.href = buildRedirectUrl();
 				} else {
-					cb && cb('success');
+					cb && cb('success', _json);
 				}
 			});
 			//}
@@ -261,12 +261,12 @@ exports.afterAllLogin = function(cb, option) {
 	}
 
 	var compare = compareVersion('4.1.0', '2.5.0');
-	if (!compare) {
+	/*if (!compare) {
 		// 小于4.1.0时，有cookie就算登录
 		if (hasLogin()) {
 			return cb();
 		}
-	}
+	}*/
 
 
 	// 已经登录并且不是客户端就回调，否则重新登录，避免客户端切用户时webview的用户切换不了
@@ -278,12 +278,12 @@ exports.afterAllLogin = function(cb, option) {
 			log('非app，跳转Account去登录');
 			document.location.href = buildRedirectUrl();
 		} else { // 是app
-			_ready(function(err) {
+			_ready(function(err, json) {
 				if (err === 'fail') {
 					log('得不到token,跳转去account ' + buildRedirectUrl())
 					document.location.href = buildRedirectUrl();
 				} else if (err === 'success') {
-					cb();
+					cb(json);
 				}
 			}, option);
 		}
@@ -298,14 +298,14 @@ exports.afterFkzrLogin = function(cb, option) {
 	}
 
 	var compare = compareVersion('4.1.0','2.5.0');
-	if (!compare) {
+	/*if (!compare) {
 		// 小于特定版本时，有cookie就算登录
 		if (hasLogin()) {
 			return cb('success');
 		} else {
 			return cb('fail');
 		}
-	}
+	}*/
 	// 已经登录并且不是客户端就回调，否则重新登录，避免客户端切用户时webview的用户切换不了
 	if (hasLogin() && !appReg.test(ua())) {
 		cb('success');
